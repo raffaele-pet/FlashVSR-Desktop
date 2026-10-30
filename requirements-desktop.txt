@@ -1,0 +1,12 @@
+# Tested Windows/Python 3.10 runtime. PyTorch 2.7.1+cu128 is installed
+# separately from https://download.pytorch.org/whl/cu128 by the installer.
+einops==0.8.2
+imageio==2.38.0
+imageio-ffmpeg==0.7.0
+numpy==2.2.6
+opencv-python-headless==5.0.0.93
+Pillow==12.3.0
+safetensors==0.8.0
+tqdm==4.70.1
+huggingface-hub==2.3.0
+triton-windows==3.3.1.post21

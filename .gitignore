@@ -5,6 +5,16 @@ __pycache__/
 ckpts/*
 !ckpts/.gitkeep
 outputs/
-tests/
+.python/
+.cache/
+desktop/bin/
+desktop/obj/
+desktop/Assets/engine.zip
+artifacts/
+*.user
+*.suo
+**/bin/
+**/obj/
+.venv-build/
 operators/Block-Sparse-Attention
 *.egg-info

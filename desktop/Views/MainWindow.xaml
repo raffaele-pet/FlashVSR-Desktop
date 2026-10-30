@@ -1,0 +1,50 @@
+<Window x:Class="FlashVsr.Desktop.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="FlashVSR Desktop" Width="1180" Height="850" MinWidth="1030" MinHeight="790" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+ <Grid>
+  <Grid.ColumnDefinitions><ColumnDefinition Width="195"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0" Padding="23,28">
+   <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel><Image Source="/Assets/flashvsr.png" Width="48" Height="48" HorizontalAlignment="Left"/><TextBlock Text="FlashVSR+" FontSize="22" FontWeight="SemiBold" Margin="0,17,0,2"/><TextBlock Text="DESKTOP" Style="{StaticResource Eyebrow}"/>
+     <Border Background="#242137" CornerRadius="8" Margin="-5,42,-5,0" Padding="14,12"><TextBlock Text="✦   Video upscale" Foreground="{StaticResource Accent}" FontWeight="SemiBold"/></Border>
+     <TextBlock Text="Più dettaglio.&#10;Tutta l’inquadratura." Style="{StaticResource Caption}" Margin="9,18,0,0"/>
+    </StackPanel>
+    <StackPanel Grid.Row="2"><Border Background="#141C20" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="●  Elaborazione locale" FontSize="11" Foreground="#91D6B3"/><TextBlock x:Name="GpuLabel" Text="NVIDIA · CUDA" FontSize="10" Foreground="{StaticResource Muted}" Margin="0,6,0,0"/></StackPanel></Border><Button x:Name="SetupButton" Content="Installazione e verifica" Style="{StaticResource Quiet}" FontSize="11" Click="Setup_Click" Margin="-7,12,-7,0"/><TextBlock Text="v1.0.0 · Turbo" Style="{StaticResource Caption}" FontSize="10" Margin="5,7,0,0"/></StackPanel>
+   </Grid>
+  </Border>
+  <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+   <StackPanel Margin="34,30,34,28">
+    <DockPanel><Border DockPanel.Dock="Right" Background="#1F1B31" CornerRadius="12" Padding="10,5" VerticalAlignment="Top"><TextBlock Text="FLASHVSR+ TURBO" Foreground="{StaticResource Accent}" FontSize="10" FontWeight="SemiBold"/></Border><TextBlock Text="IL TUO VIDEO, UN PASSO AVANTI" Style="{StaticResource Eyebrow}" Margin="0,5,0,0"/></DockPanel>
+    <TextBlock Text="Un nuovo livello di dettaglio." FontSize="29" FontWeight="SemiBold" Margin="0,12,0,6"/>
+    <TextBlock Text="Scegli un video, imposta il formato e lascia il resto all’AI." Foreground="{StaticResource Muted}" Margin="0,0,0,25"/>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="1.14*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+     <Border Style="{StaticResource Card}">
+      <StackPanel><DockPanel><TextBlock Text="01  /  VIDEO" Style="{StaticResource Eyebrow}"/><Button x:Name="ChangeButton" Content="Cambia" Style="{StaticResource Quiet}" FontSize="11" Padding="0" HorizontalAlignment="Right" Click="Choose_Click"/></DockPanel>
+       <Border x:Name="DropZone" Height="252" Margin="0,17,0,14" Background="{StaticResource Inset}" BorderBrush="#3A3652" BorderThickness="1" CornerRadius="10" AllowDrop="True" DragOver="Video_DragOver" Drop="Video_Drop" MouseLeftButtonUp="Drop_Click" Cursor="Hand">
+        <Grid><Image x:Name="Preview" Stretch="Uniform" Margin="6"/><StackPanel x:Name="DropHint" VerticalAlignment="Center" HorizontalAlignment="Center"><TextBlock Text="↥" FontSize="35" Foreground="{StaticResource Accent}" HorizontalAlignment="Center"/><TextBlock Text="Trascina qui il tuo video" FontSize="15" FontWeight="SemiBold" Margin="0,10,0,5"/><TextBlock Text="oppure fai clic per selezionarlo" Style="{StaticResource Caption}" HorizontalAlignment="Center"/><TextBlock Text="MP4 · MOV · MKV · AVI · WEBM" Style="{StaticResource Caption}" FontSize="10" Margin="0,18,0,0" HorizontalAlignment="Center"/></StackPanel></Grid>
+       </Border>
+       <TextBlock x:Name="VideoName" Text="Nessun video selezionato" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/><TextBlock x:Name="VideoInfo" Text="L’originale rimane sempre intatto." Style="{StaticResource Caption}" Margin="0,5,0,0"/>
+       <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Margin="0,20,0,0" Padding="0,16,0,0"><StackPanel><TextBlock Text="INQUADRATURA COMPLETA" Style="{StaticResource Eyebrow}" Foreground="{StaticResource Accent}"/><TextBlock Text="Nessun ritaglio. Il video viene adattato al motore e riportato al rapporto scelto in uscita." Style="{StaticResource Caption}" Margin="0,7,0,0"/></StackPanel></Border>
+      </StackPanel>
+     </Border>
+     <Border Grid.Column="2" Style="{StaticResource Card}">
+      <StackPanel x:Name="OptionsPanel"><TextBlock Text="02  /  FORMATO E QUALITÀ" Style="{StaticResource Eyebrow}"/><TextBlock Text="Rapporto d’aspetto" FontWeight="SemiBold" Margin="0,18,0,9"/><ComboBox x:Name="AspectBox" DisplayMemberPath="Display" SelectionChanged="Options_Changed" AutomationProperties.Name="Rapporto d’aspetto"/>
+       <TextBlock Text="Risoluzione" FontWeight="SemiBold" Margin="0,19,0,9"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+        <RadioButton x:Name="StandardRadio" GroupName="Quality" Style="{StaticResource Quality}" IsChecked="True" Checked="Quality_Changed"><StackPanel><TextBlock Text="Standard" FontWeight="SemiBold"/><TextBlock x:Name="StandardSize" Text="2048 × 1152" FontSize="12" Margin="0,7,0,3"/><TextBlock Text="Equilibrato" Style="{StaticResource Caption}" FontSize="10"/></StackPanel></RadioButton>
+        <RadioButton x:Name="HighRadio" Grid.Column="2" GroupName="Quality" Style="{StaticResource Quality}" Checked="Quality_Changed"><StackPanel><TextBlock Text="Alta" FontWeight="SemiBold"/><TextBlock x:Name="HighSize" Text="2560 × 1440" FontSize="12" Margin="0,7,0,3"/><TextBlock Text="Più dettaglio" Style="{StaticResource Caption}" FontSize="10"/></StackPanel></RadioButton>
+       </Grid>
+       <TextBlock x:Name="GeometryInfo" Style="{StaticResource Caption}" Margin="0,12,0,0"/>
+       <Border x:Name="HighWarning" Visibility="Collapsed" Background="#292339" CornerRadius="7" Padding="10" Margin="0,12,0,0"><TextBlock Text="La qualità Alta richiede più memoria e può impiegare più tempo." Foreground="#D8C5FA" FontSize="11"/></Border>
+       <Border Height="1" Background="{StaticResource Line}" Margin="0,18,0,16"/>
+       <TextBlock Text="03  /  SALVATAGGIO" Style="{StaticResource Eyebrow}"/><TextBlock Text="File di uscita" FontWeight="SemiBold" Margin="0,12,0,8"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions><TextBox x:Name="OutputBox" TextChanged="Output_TextChanged" FontSize="11" VerticalContentAlignment="Center" ToolTip="Percorso completo del video finale" AutomationProperties.Name="File di uscita"/><Button Grid.Column="2" Content="…" FontSize="18" Padding="0" Click="Output_Click" ToolTip="Scegli dove salvare"/></Grid>
+      </StackPanel>
+     </Border>
+    </Grid>
+    <Border Style="{StaticResource Card}" Margin="0,20,0,0" Padding="21,17">
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="20"/><ColumnDefinition Width="190"/></Grid.ColumnDefinitions><StackPanel VerticalAlignment="Center"><TextBlock x:Name="StatusTitle" Text="Pronto quando vuoi." FontWeight="SemiBold"/><TextBlock x:Name="StatusDetail" Text="Tutto il video, alla qualità che scegli." Style="{StaticResource Caption}" Margin="0,5,0,9"/><ProgressBar x:Name="JobProgress" Minimum="0" Maximum="100" Value="0"/><TextBlock x:Name="FrameProgress" Style="{StaticResource Caption}" FontSize="10" Margin="0,6,0,0"/></StackPanel><Grid Grid.Column="2"><Button x:Name="StartButton" Content="✦   Avvia upscale" Style="{StaticResource Primary}" Click="Start_Click" IsEnabled="False"/><Button x:Name="CancelButton" Content="Interrompi" Visibility="Collapsed" Click="Cancel_Click"/></Grid></Grid>
+    </Border>
+    <DockPanel Margin="0,8,0,0"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button x:Name="OpenVideoButton" Content="Apri video ↗" Style="{StaticResource Quiet}" Click="OpenVideo_Click" Visibility="Collapsed"/><Button x:Name="OpenFolderButton" Content="Mostra nella cartella" Style="{StaticResource Quiet}" Click="OpenFolder_Click" Visibility="Collapsed"/></StackPanel><Expander Header="Dettagli dell’elaborazione" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,5,0,0"><TextBox x:Name="LogBox" IsReadOnly="True" AcceptsReturn="True" Height="120" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="10" Margin="0,8,0,0"/></Expander></DockPanel>
+   </StackPanel>
+  </ScrollViewer>
+ </Grid>
+</Window>

@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+ <ItemGroup><Compile Include="../../desktop/Models/Presets.cs" Link="Presets.cs"/><Compile Include="../../desktop/Services/Downloads.cs" Link="Downloads.cs"/><Compile Include="../../desktop/Services/ProcessRunner.cs" Link="ProcessRunner.cs"/><EmbeddedResource Include="../../bridge/presets.json" LogicalName="presets.json"/></ItemGroup>
+</Project>

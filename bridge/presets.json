@@ -1,0 +1,10 @@
+[
+  {"id":"1:1","name":"Square","standard":{"width":1536,"height":1536,"nativeWidth":1536,"nativeHeight":1536},"high":{"width":1920,"height":1920,"nativeWidth":1920,"nativeHeight":1920}},
+  {"id":"2:3","name":"Portrait Photo","standard":{"width":1280,"height":1920,"nativeWidth":1280,"nativeHeight":1920},"high":{"width":1536,"height":2304,"nativeWidth":1536,"nativeHeight":2304}},
+  {"id":"3:2","name":"Photo","standard":{"width":1920,"height":1280,"nativeWidth":1920,"nativeHeight":1280},"high":{"width":2304,"height":1536,"nativeWidth":2304,"nativeHeight":1536}},
+  {"id":"3:4","name":"Portrait Standard","standard":{"width":1344,"height":1792,"nativeWidth":1280,"nativeHeight":1792},"high":{"width":1632,"height":2176,"nativeWidth":1664,"nativeHeight":2176}},
+  {"id":"4:3","name":"Standard","standard":{"width":1792,"height":1344,"nativeWidth":1792,"nativeHeight":1280},"high":{"width":2176,"height":1632,"nativeWidth":2176,"nativeHeight":1664}},
+  {"id":"9:16","name":"Portrait Widescreen","standard":{"width":1152,"height":2048,"nativeWidth":1152,"nativeHeight":2048},"high":{"width":1440,"height":2560,"nativeWidth":1408,"nativeHeight":2560}},
+  {"id":"16:9","name":"Widescreen","standard":{"width":2048,"height":1152,"nativeWidth":2048,"nativeHeight":1152},"high":{"width":2560,"height":1440,"nativeWidth":2560,"nativeHeight":1408}},
+  {"id":"21:9","name":"Ultrawide","standard":{"width":2352,"height":1008,"nativeWidth":2304,"nativeHeight":1024},"high":{"width":2912,"height":1248,"nativeWidth":2944,"nativeHeight":1280}}
+]
