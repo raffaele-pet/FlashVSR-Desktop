@@ -1,5 +1,17 @@
 # Verification — 30 October 2026
 
+## Patch 1.0.1 — 6 November 2026
+
+- Reproduced the audio-copy truncation on a real 107-frame / 24 fps input:
+  its AAC audio ended at 4.450000 s while its video ended at 4.458333 s.
+- After removing `-shortest`, the same input retained all 107 decoded video
+  frames through audio/video stream copy. Strict worker validation remains.
+- Four new real-FFmpeg regression tests passed, covering shorter audio,
+  fractional FPS, separate input/encoded tracks and video-only input.
+- All eight Python tests (audio and geometry) passed.
+
+## Initial release
+
 Verified on Windows x64 with an NVIDIA RTX 4070 Ti (12 GB), Python 3.10.20,
 PyTorch 2.7.1+cu128 and triton-windows 3.3.1.post21.
 

@@ -25,7 +25,7 @@ Copy-Item -LiteralPath (Join-Path $projectRoot 'README_ENGINE.md') -Destination 
 Compress-Archive -Path (Join-Path $payloadRoot '*') -DestinationPath $zip -Force
 & $Dotnet publish (Join-Path $projectRoot 'desktop/FlashVsr.Desktop.csproj') -c $Configuration -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o (Join-Path $artifactRoot 'app')
 if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
-$setup = Join-Path $artifactRoot 'FlashVSR-Desktop-Setup-1.0.0.exe'
+$setup = Join-Path $artifactRoot 'FlashVSR-Desktop-Setup-1.0.1.exe'
 Copy-Item -LiteralPath (Join-Path $artifactRoot 'app/FlashVSRDesktop.exe') -Destination $setup -Force
 Get-FileHash -LiteralPath $setup -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLowerInvariant())  $([System.IO.Path]::GetFileName($setup))" } | Set-Content -LiteralPath ($setup + '.sha256') -Encoding ascii
 Write-Output "Setup: $setup"

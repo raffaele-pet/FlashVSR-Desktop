@@ -6,7 +6,7 @@ namespace FlashVsr.Desktop.Services;
 public record InstallInfo(string Version, string EnginePath, string PythonPath, DateTime InstalledUtc);
 public static class AppPaths
 {
-    public const string Version = "1.0.0";
+    public const string Version = "1.0.1";
     public const string Marker = "flashvsr-install.json";
     public static string DefaultRoot => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "FlashVSR Desktop");
     public static string Data => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FlashVSR Desktop");

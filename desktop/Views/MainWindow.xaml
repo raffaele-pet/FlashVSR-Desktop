@@ -7,7 +7,7 @@
      <Border Background="#242137" CornerRadius="8" Margin="-5,42,-5,0" Padding="14,12"><TextBlock Text="✦   Video upscale" Foreground="{StaticResource Accent}" FontWeight="SemiBold"/></Border>
      <TextBlock Text="Più dettaglio.&#10;Tutta l’inquadratura." Style="{StaticResource Caption}" Margin="9,18,0,0"/>
     </StackPanel>
-    <StackPanel Grid.Row="2"><Border Background="#141C20" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="●  Elaborazione locale" FontSize="11" Foreground="#91D6B3"/><TextBlock x:Name="GpuLabel" Text="NVIDIA · CUDA" FontSize="10" Foreground="{StaticResource Muted}" Margin="0,6,0,0"/></StackPanel></Border><Button x:Name="SetupButton" Content="Installazione e verifica" Style="{StaticResource Quiet}" FontSize="11" Click="Setup_Click" Margin="-7,12,-7,0"/><TextBlock Text="v1.0.0 · Turbo" Style="{StaticResource Caption}" FontSize="10" Margin="5,7,0,0"/></StackPanel>
+    <StackPanel Grid.Row="2"><Border Background="#141C20" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="●  Elaborazione locale" FontSize="11" Foreground="#91D6B3"/><TextBlock x:Name="GpuLabel" Text="NVIDIA · CUDA" FontSize="10" Foreground="{StaticResource Muted}" Margin="0,6,0,0"/></StackPanel></Border><Button x:Name="SetupButton" Content="Installazione e verifica" Style="{StaticResource Quiet}" FontSize="11" Click="Setup_Click" Margin="-7,12,-7,0"/><TextBlock Text="v1.0.1 · Turbo" Style="{StaticResource Caption}" FontSize="10" Margin="5,7,0,0"/></StackPanel>
    </Grid>
   </Border>
   <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

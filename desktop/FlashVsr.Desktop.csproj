@@ -4,7 +4,7 @@
     <UseWPF>true</UseWPF><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>FlashVSRDesktop</AssemblyName><RootNamespace>FlashVsr.Desktop</RootNamespace>
     <ApplicationIcon>Assets\flashvsr.ico</ApplicationIcon>
-    <Version>1.0.0</Version><Description>FlashVSR+ desktop video super-resolution</Description>
+    <Version>1.0.1</Version><Description>FlashVSR+ desktop video super-resolution</Description>
     <PublishSingleFile>true</PublishSingleFile><SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier><DebugType>none</DebugType>

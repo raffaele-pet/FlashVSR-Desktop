@@ -6,7 +6,7 @@ A native Windows application and guided installer for the released **FlashVSR+ T
 
 ## Installazione
 
-1. Scarica **FlashVSR-Desktop-Setup-1.0.0.exe** dalla [pagina Releases](https://github.com/raffaele-pet/FlashVSR-Desktop/releases).
+1. Scarica **FlashVSR-Desktop-Setup-1.0.1.exe** dalla [pagina Releases](https://github.com/raffaele-pet/FlashVSR-Desktop/releases).
 2. Apri il file e scegli la cartella di installazione. Se hai già i checkpoint, puoi selezionare una cartella FlashVSR con `ckpts` per riutilizzarli dopo verifica SHA-256.
 3. Premi **Installa FlashVSR**. La procedura mostra ogni passaggio, i download, le dipendenze e il registro completo. Crea automaticamente i collegamenti sul desktop e nel menu Start.
 4. Apri **FlashVSR Desktop**, scegli o trascina il video, seleziona formato e qualità, scegli il file di uscita e premi **Avvia upscale**.

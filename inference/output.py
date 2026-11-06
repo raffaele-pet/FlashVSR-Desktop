@@ -148,7 +148,12 @@ def mux_source_audio(
     source_path: str | Path,
     destination: str | Path,
 ) -> None:
-    """Copy the source audio stream when one exists, otherwise keep video-only."""
+    """Copy optional source audio without shortening the encoded video.
+
+    Audio packet boundaries can precede the final video frame even when both
+    tracks come from the same input. ``-shortest`` would discard those final
+    video packets during stream copy; the complete video is authoritative.
+    """
     video_path = Path(video_path)
     source_path = Path(source_path)
     destination = Path(destination)
@@ -163,7 +168,6 @@ def mux_source_audio(
         "-map", "1:a:0?",
         "-c:v", "copy",
         "-c:a", "copy",
-        "-shortest",
         "-movflags", "+faststart",
         str(destination),
     ]
