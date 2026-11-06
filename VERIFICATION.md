@@ -1,5 +1,18 @@
 # Verification — 30 October 2026
 
+## Repository launchers
+
+- 19 Windows PowerShell checks passed for the download UI compilation,
+  default/custom installation discovery, incomplete/corrupt installations,
+  checksum rejection, release URL/version validation and both actual BAT
+  entry points. BAT dispatch was exercised from an unrelated working
+  directory with spaces, an accented character and `&`, `!`, `%` in the
+  extracted repository folder name, using a native argument recorder instead
+  of installing or starting an application.
+- The real latest-release download was exercised separately with launching
+  disabled: the public EXE was downloaded, verified with the published
+  SHA-256, cached, and the installed app was successfully resolved.
+
 ## Patch 1.0.1 — 6 November 2026
 
 - Reproduced the audio-copy truncation on a real 107-frame / 24 fps input:

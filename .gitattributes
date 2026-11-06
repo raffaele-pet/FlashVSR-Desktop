@@ -6,6 +6,7 @@
 *.md text eol=lf
 *.yml text eol=lf
 *.ps1 text eol=crlf
+*.bat text eol=crlf
 *.png binary
 *.ico binary
 *.pth binary

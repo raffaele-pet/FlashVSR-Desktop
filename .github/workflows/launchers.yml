@@ -1,0 +1,17 @@
+name: Verify repository BAT launchers
+on:
+  push:
+    paths:
+      - '*.bat'
+      - 'scripts/RepositoryLauncher.ps1'
+      - 'tests/test_repository_launchers.ps1'
+      - '.github/workflows/launchers.yml'
+  workflow_dispatch:
+jobs:
+  launchers:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify BAT dispatch, installation discovery and checksums
+        shell: powershell
+        run: ./tests/test_repository_launchers.ps1

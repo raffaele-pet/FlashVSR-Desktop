@@ -4,12 +4,27 @@
 
 A native Windows application and guided installer for the released **FlashVSR+ Turbo** model. Independent desktop interface; not an official OpenImagingLab application. Based on the [original FlashVSR+ engine](https://github.com/OpenImagingLab/FlashVSR_Plus), whose license, authors and documentation are preserved.
 
-## Installazione
+**[Scarica l’installer Windows EXE](https://github.com/raffaele-pet/FlashVSR-Desktop/releases/download/v1.0.1/FlashVSR-Desktop-Setup-1.0.1.exe)** · [Releases e altri download](https://github.com/raffaele-pet/FlashVSR-Desktop/releases/latest) · [ZIP della repository con i BAT](https://github.com/raffaele-pet/FlashVSR-Desktop/archive/refs/heads/main.zip)
+
+L’EXE è pubblicato su GitHub in **Releases → Assets**, non nell’elenco dei file del codice. Il pulsante **Code → Download ZIP** scarica invece i sorgenti. L’applicazione è un programma desktop per Windows.
+
+## Installare dall’EXE
 
 1. Scarica **FlashVSR-Desktop-Setup-1.0.1.exe** dalla [pagina Releases](https://github.com/raffaele-pet/FlashVSR-Desktop/releases).
 2. Apri il file e scegli la cartella di installazione. Se hai già i checkpoint, puoi selezionare una cartella FlashVSR con `ckpts` per riutilizzarli dopo verifica SHA-256.
 3. Premi **Installa FlashVSR**. La procedura mostra ogni passaggio, i download, le dipendenze e il registro completo. Crea automaticamente i collegamenti sul desktop e nel menu Start.
 4. Apri **FlashVSR Desktop**, scegli o trascina il video, seleziona formato e qualità, scegli il file di uscita e premi **Avvia upscale**.
+
+## Usare la repository scaricata come ZIP
+
+1. Scarica lo [ZIP aggiornato della repository](https://github.com/raffaele-pet/FlashVSR-Desktop/archive/refs/heads/main.zip) oppure usa **Code → Download ZIP**.
+2. Seleziona **Estrai tutto**. Non eseguire i BAT dall’interno della cartella ZIP compressa: servono anche i file nella sottocartella `scripts`.
+3. Fai doppio clic su **`Installa.bat`**. Recupera l’ultima release Windows da GitHub, verifica il checksum SHA-256 e apre l’installazione grafica. La creazione del collegamento desktop è già selezionata; la procedura prepara automaticamente ambiente, dipendenze e modelli.
+4. Dopo l’installazione, fai doppio clic su **`Avvia.bat`** oppure sul collegamento **FlashVSR Desktop** sul desktop.
+
+Non occorre compilare il codice o installare manualmente Python/.NET/Git per usare questi BAT. `Avvia.bat` trova anche un’installazione in una cartella personalizzata attraverso i collegamenti creati dall’installer. Se l’app non è installata, propone di avviare l’installazione guidata. Per scaricare installer, dipendenze e modelli serve Internet; l’avvio dell’app già installata funziona anche offline.
+
+I BAT sono disponibili nello ZIP del ramo `main`. Gli archivi **Source code** delle release precedenti restano le fotografie storiche dei rispettivi tag e possono non contenerli. Una volta installata l’app, il collegamento desktop funziona indipendentemente dalla cartella dei sorgenti estratti.
 
 Non servono Python, Git, .NET o CUDA Toolkit preinstallati. Il file Setup include il runtime .NET e il codice del motore. L’installazione prepara Python 3.10 isolato, PyTorch 2.7.1/CUDA 12.8, triton-windows 3.3.1.post21, l’operatore FlashVSR Triton, FFmpeg e gli altri pacchetti. Scarica Turbo/TCDecoder da Hugging Face e verifica i checksum. Il Python di sistema e il PATH non vengono modificati.
 
