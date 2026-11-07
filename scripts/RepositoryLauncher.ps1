@@ -52,27 +52,27 @@ function Find-FlashVsrApplication {
 function Assert-InstallerChecksum {
     param([string]$Installer, [string]$ChecksumFile)
     $line = (Get-Content -LiteralPath $ChecksumFile -Raw).Trim()
-    if ($line -notmatch '^([0-9a-fA-F]{64})\s+\*?(.+)$') { throw 'Il file SHA-256 della release non e valido.' }
+    if ($line -notmatch '^([0-9a-fA-F]{64})\s+\*?(.+)$') { throw 'Invalid release SHA-256 file.' }
     $expected = $matches[1]; $name = $matches[2].Trim()
-    if ($name -cne [IO.Path]::GetFileName($Installer)) { throw 'Il checksum appartiene a un altro file.' }
+    if ($name -cne [IO.Path]::GetFileName($Installer)) { throw 'The checksum belongs to a different file.' }
     $actual = (Get-FileHash -LiteralPath $Installer -Algorithm SHA256).Hash
-    if ($actual -ine $expected) { throw 'Il controllo SHA-256 non e riuscito. Il file non verra eseguito.' }
+    if ($actual -ine $expected) { throw 'SHA-256 verification failed. The installer will not run.' }
 }
 
 function Select-InstallerAssets {
     param($Release)
     $installers = @($Release.assets | Where-Object { $_.name -cmatch '^FlashVSR-Desktop-Setup-([0-9]+\.[0-9]+\.[0-9]+)\.exe$' })
-    if ($installers.Count -ne 1) { throw 'Installer Windows non trovato nella release GitHub.' }
+    if ($installers.Count -ne 1) { throw 'Windows installer not found in the GitHub release.' }
     $installer = $installers[0]
     $version = [regex]::Match($installer.name, '([0-9]+\.[0-9]+\.[0-9]+)\.exe$').Groups[1].Value
-    if ($Release.tag_name -cne ('v' + $version)) { throw 'La versione del file non corrisponde alla release.' }
+    if ($Release.tag_name -cne ('v' + $version)) { throw 'Installer version does not match the release.' }
     $checksums = @($Release.assets | Where-Object { $_.name -ceq ($installer.name + '.sha256') })
-    if ($checksums.Count -ne 1) { throw 'Checksum della release non trovato.' }
+    if ($checksums.Count -ne 1) { throw 'Release checksum not found.' }
     foreach ($asset in @($installer, $checksums[0])) {
         $uri = [uri]$asset.browser_download_url
         $expectedPath = '/raffaele-pet/FlashVSR-Desktop/releases/download/' + $Release.tag_name + '/' + $asset.name
         if ($uri.Scheme -cne 'https' -or $uri.Host -ine 'github.com' -or $uri.AbsolutePath -cne $expectedPath) {
-            throw 'Indirizzo di download non previsto. Usa la pagina Releases ufficiale del progetto.'
+            throw 'Unexpected download address. Use the official Releases page.'
         }
     }
     return [pscustomobject]@{ Version = $version; Installer = $installer; Checksum = $checksums[0] }
@@ -97,32 +97,32 @@ namespace FlashVsrRepository {
             bool cancelled = false;
             using (var form = new Form())
             using (var client = new WebClient()) {
-                form.Text = "FlashVSR Desktop - Preparazione";
+                form.Text = "FlashVSR Desktop - Setup";
                 form.ClientSize = new Size(510, 205);
                 form.FormBorderStyle = FormBorderStyle.FixedDialog;
                 form.MaximizeBox = false; form.MinimizeBox = false;
                 form.StartPosition = FormStartPosition.CenterScreen;
-                form.BackColor = Color.FromArgb(11,12,22);
-                form.ForeColor = Color.FromArgb(245,240,255);
+                form.BackColor = Color.FromArgb(17,18,21);
+                form.ForeColor = Color.FromArgb(241,241,244);
                 form.Font = new Font("Segoe UI", 10);
                 if (File.Exists(iconPath)) form.Icon = new Icon(iconPath);
-                var title = new Label { Text = "Preparazione di FlashVSR Desktop", AutoSize = true,
+                var title = new Label { Text = "Download FlashVSR Desktop", AutoSize = true,
                     Location = new Point(24,23), Font = new Font("Segoe UI", 13, FontStyle.Bold) };
-                var status = new Label { Text = "Download dell'installer ufficiale da GitHub...",
+                var status = new Label { Text = "Downloading the installer from GitHub...",
                     Location = new Point(24,64), Size = new Size(460,38),
-                    ForeColor = Color.FromArgb(183,156,255) };
+                    ForeColor = Color.FromArgb(152,153,165) };
                 var progress = new ProgressBar { Location = new Point(24,110), Size = new Size(460,8),
                     Style = ProgressBarStyle.Marquee };
-                var cancel = new Button { Text = "Annulla", Location = new Point(380,145),
+                var cancel = new Button { Text = "Cancel", Location = new Point(380,145),
                     Size = new Size(104,34), FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.FromArgb(34,36,52), ForeColor = form.ForeColor };
+                    BackColor = Color.FromArgb(36,37,44), ForeColor = form.ForeColor };
                 form.Controls.AddRange(new Control[] { title, status, progress, cancel });
                 client.Headers[HttpRequestHeader.UserAgent] = "FlashVSR-Desktop-Repository-Launcher";
                 client.DownloadProgressChanged += (s,e) => {
                     if (e.TotalBytesToReceive > 0) {
                         progress.Style = ProgressBarStyle.Continuous;
                         progress.Value = Math.Max(0, Math.Min(100, e.ProgressPercentage));
-                        status.Text = string.Format("Download dell'installer: {0:F1} / {1:F1} MB ({2}%)",
+                        status.Text = string.Format("Installer download: {0:F1} / {1:F1} MB ({2}%)",
                             e.BytesReceived/1048576d, e.TotalBytesToReceive/1048576d, e.ProgressPercentage);
                     }
                 };
@@ -135,8 +135,8 @@ namespace FlashVsrRepository {
                 };
                 form.ShowDialog();
             }
-            if (cancelled) throw new OperationCanceledException("Download annullato.");
-            if (failure != null) throw new IOException("Download dell'installer non riuscito.", failure);
+            if (cancelled) throw new OperationCanceledException("Download cancelled.");
+            if (failure != null) throw new IOException("Installer download failed.", failure);
         }
     }
 }
@@ -173,8 +173,8 @@ function Get-FlashVsrInstaller {
         # the temporary download. An existing cached copy is never executed
         # unless its content matches the checksum of the selected release.
         $expected = (Get-Content -LiteralPath $checksum -Raw).Trim()
-        if ($expected -notmatch '^([0-9a-fA-F]{64})\s+\*?(.+)$' -or $matches[2].Trim() -cne $assets.Installer.name) { throw 'Checksum della release non valido.' }
-        if ((Get-FileHash -LiteralPath $partial -Algorithm SHA256).Hash -ine $matches[1]) { throw 'Il download non supera il controllo SHA-256.' }
+        if ($expected -notmatch '^([0-9a-fA-F]{64})\s+\*?(.+)$' -or $matches[2].Trim() -cne $assets.Installer.name) { throw 'Invalid release checksum.' }
+        if ((Get-FileHash -LiteralPath $partial -Algorithm SHA256).Hash -ine $matches[1]) { throw 'Downloaded file failed SHA-256 verification.' }
         Move-Item -LiteralPath $partial -Destination $installer -Force
         Assert-InstallerChecksum $installer $checksum
         return $installer
@@ -190,16 +190,16 @@ function Invoke-FlashVsrInstall {
     # desktop and Start-menu shortcuts. Its desktop option is enabled by default.
     $process = Start-Process -FilePath $installer -ArgumentList '--setup' -PassThru
     $process.WaitForExit()
-    if ($process.ExitCode -ne 0) { throw ('Installazione non riuscita (codice ' + $process.ExitCode + ').') }
+    if ($process.ExitCode -ne 0) { throw ('Installation failed (code ' + $process.ExitCode + ').') }
 }
 
 function Invoke-FlashVsrLaunch {
     $application = Find-FlashVsrApplication
     if ($null -eq $application) {
-        if ($NoUi) { throw 'FlashVSR Desktop non e installato. Esegui Installa.bat.' }
+        if ($NoUi) { throw 'FlashVSR Desktop is not installed. Run Installa.bat.' }
         Add-Type -AssemblyName System.Windows.Forms
         $answer = [Windows.Forms.MessageBox]::Show(
-            "FlashVSR Desktop non risulta installato. Vuoi aprire l'installazione guidata?",
+            "FlashVSR Desktop is not installed. Open the setup wizard?",
             'FlashVSR Desktop', [Windows.Forms.MessageBoxButtons]::YesNo, [Windows.Forms.MessageBoxIcon]::Question)
         if ($answer -eq [Windows.Forms.DialogResult]::Yes) { Invoke-FlashVsrInstall }
         return
@@ -218,7 +218,7 @@ try {
     if ($NoUi) { Write-Error $_; exit 1 }
     Add-Type -AssemblyName System.Windows.Forms
     [void][Windows.Forms.MessageBox]::Show(
-        $_.Exception.Message + "`r`n`r`nInstaller su GitHub:`r`n" + $script:ReleasePage,
+        $_.Exception.Message + "`r`n`r`nInstaller on GitHub:`r`n" + $script:ReleasePage,
         'FlashVSR Desktop', [Windows.Forms.MessageBoxButtons]::OK, [Windows.Forms.MessageBoxIcon]::Error)
     exit 1
 }

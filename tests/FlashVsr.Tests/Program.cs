@@ -7,6 +7,13 @@ using FlashVsr.Desktop.Services;
 
 static void Assert(bool test, string message) { if (!test) throw new Exception(message); }
 var checks = 0;
+foreach (var (w,h) in new[] {(1920,1080),(1080,1920),(1001,777),(4096,2160),(3440,1440)}) foreach (var high in new[] {false,true}) {
+    var p = Presets.ForVideo(w,h,high);
+    Assert((long)p.Width*h == (long)p.Height*w,"Native aspect ratio mismatch");
+    Assert(p.Width%2==0 && p.Height%2==0,"Native output is not H.264 compatible");
+    Assert(p.NativeWidth%128==0 && p.NativeHeight%128==0,"Invalid native canvas"); checks++;
+}
+Assert(Presets.ForVideo(1920,1080,true) == Presets.All.Single(p=>p.Id=="16:9").High,"Canonical high resolution changed");
 foreach (var p in Presets.All) foreach (var size in new[] { p.Standard, p.High }) {
     var ratio = p.Id.Split(':').Select(int.Parse).ToArray();
     Assert(size.Width * ratio[1] == size.Height * ratio[0], "Aspect ratio mismatch");
@@ -39,5 +46,5 @@ try {
     using var processCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
     var time = System.Diagnostics.Stopwatch.StartNew();
     try { await ProcessRunner.RunAsync("powershell.exe", ["-NoProfile","-NonInteractive","-Command","Start-Sleep -Seconds 20"],folder,null,null,processCts.Token); throw new Exception("Cancelled process continued"); } catch (OperationCanceledException) { Assert(time.Elapsed.TotalSeconds < 10,"Process cancellation was too slow"); checks++; }
-    Console.WriteLine($"PASS: {checks} checks (16 geometries, resumed download, cancelled transfer, cancelled process tree)");
+    Console.WriteLine($"PASS: {checks} checks (native/preset geometries, resumed download, cancelled transfer, cancelled process tree)");
 } finally { Directory.Delete(folder, true); }

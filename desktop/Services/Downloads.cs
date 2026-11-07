@@ -39,16 +39,16 @@ public static class Downloads
                         await output.WriteAsync(buffer.AsMemory(0, read), token); done += read;
                         if ((DateTime.UtcNow - last).TotalMilliseconds > 150) { progress?.Invoke(done, total); last = DateTime.UtcNow; }
                     }
-                    if (total is { } expected && done != expected) throw new IOException("Download incompleto: ripresa automatica.");
+                    if (total is { } expected && done != expected) throw new IOException("Incomplete download: resuming automatically.");
                     progress?.Invoke(done, total);
                 }
-                if (sha256 != null && !await HashMatches(partial, sha256, token)) { File.Delete(partial); throw new IOException("Controllo SHA-256 fallito. Nuovo download."); }
+                if (sha256 != null && !await HashMatches(partial, sha256, token)) { File.Delete(partial); throw new IOException("SHA-256 verification failed. Downloading again."); }
                 File.Move(partial, destination, true); return;
             }
             catch (Exception error) when (error is HttpRequestException or IOException && !token.IsCancellationRequested && attempt < 4)
             { await Task.Delay(TimeSpan.FromSeconds(2 * (attempt + 1)), token); }
         }
-        throw new IOException("Impossibile completare il download.");
+        throw new IOException("Unable to complete download.");
     }
     public static async Task<bool> HashMatches(string file, string expected, CancellationToken token)
     {

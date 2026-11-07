@@ -19,6 +19,6 @@ public sealed class WorkerService
             } catch (JsonException) { log(line); }
         }, line => { errors.AppendLine(line); log(line); }, token,
         new Dictionary<string, string> { ["TRITON_CACHE_DIR"] = Path.Combine(AppPaths.Engine, ".cache", "triton") });
-        if (code != 0) throw new InvalidOperationException(friendlyError ?? $"Elaborazione non riuscita (codice {code}). Consulta i dettagli.");
+        if (code != 0) throw new InvalidOperationException(friendlyError ?? $"Processing failed (code {code}). See the log.");
     }
 }

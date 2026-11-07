@@ -18,6 +18,8 @@ jobs:
           python-version: '3.10'
       - name: Verify core application services
         run: dotnet run --project tests/FlashVsr.Tests -c Release
+      - name: Build real WPF playback integration checks
+        run: dotnet build tests/FlashVsr.PlayerTests -c Release
       - name: Verify repository BAT launchers
         shell: powershell
         run: ./tests/test_repository_launchers.ps1

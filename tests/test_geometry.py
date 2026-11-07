@@ -10,10 +10,64 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from bridge.worker import geometry, presets, stretch_frames, enable_full_frame_geometry
+from bridge.worker import geometry, native_geometry, presets, stretch_frames, enable_full_frame_geometry, prepare_preview, prepare_comparison, probe
 
 
 class GeometryTests(unittest.TestCase):
+    def test_native_geometry_preserves_standard_and_arbitrary_ratios(self):
+        for w, h in [(1920,1080), (1080,1920), (1080,1080), (1001,777), (4096,2160), (3440,1440), (720,1280)]:
+            for quality in ('standard', 'high'):
+                p = native_geometry(w,h,quality)
+                with self.subTest(source=(w,h), quality=quality):
+                    self.assertEqual(p['width'] * h, p['height'] * w)
+                    self.assertEqual(p['width'] % 2, 0)
+                    self.assertEqual(p['height'] % 2, 0)
+                    self.assertEqual(p['nativeWidth'] % 128, 0)
+                    self.assertEqual(p['nativeHeight'] % 128, 0)
+                    self.assertLess(p['nativeWidth'] * p['nativeHeight'], 4_100_000)
+        self.assertEqual(native_geometry(1920,1080,'high'), geometry('16:9','high'))
+        self.assertEqual(native_geometry(1080,1920,'standard'), geometry('9:16','standard'))
+
+    def test_preview_keeps_source_frames_audio_and_original_file(self):
+        import hashlib
+        import subprocess
+        import imageio_ffmpeg
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder)/'source with spaces.mp4'
+            output = Path(folder)/'preview.mp4'
+            ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+            subprocess.run([ffmpeg, '-v', 'error', '-y', '-f', 'lavfi', '-i', 'testsrc2=size=320x180:rate=24:duration=0.5',
+                            '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000:duration=0.5',
+                            '-c:v','libx264','-pix_fmt','yuv420p','-c:a','aac',str(source)], check=True)
+            before = hashlib.sha256(source.read_bytes()).hexdigest()
+            prepare_preview(source, output)
+            info = probe(output)
+            self.assertEqual((info['width'],info['height'],info['frames']), (320,180,12))
+            self.assertEqual(info['fps'],24)
+            self.assertEqual(before,hashlib.sha256(source.read_bytes()).hexdigest())
+            audio = subprocess.run([ffmpeg,'-v','error','-i',str(output),'-map','0:a:0','-f','null','-'], capture_output=True)
+            self.assertEqual(audio.returncode,0,audio.stderr)
+            self.assertFalse(output.with_suffix('.partial.mp4').exists())
+            comparison = Path(folder)/'compare.mp4'
+            prepare_comparison(source, output, comparison)
+            packed = probe(comparison)
+            self.assertEqual((packed['width'],packed['height'],packed['frames'],packed['fps']), (640,180,12,24))
+            import cv2
+            reader = cv2.VideoCapture(str(comparison))
+            decoded = 0
+            try:
+                while True:
+                    ok, frame = reader.read()
+                    if not ok: break
+                    # Identical source/result motion must occupy the same
+                    # frame in both halves, including the final frame.
+                    self.assertLess(np.abs(frame[:,:320].astype(float)-frame[:,320:].astype(float)).mean(), 3)
+                    decoded += 1
+            finally: reader.release()
+            self.assertEqual(decoded,12)
+            with self.assertRaises(ValueError): prepare_preview(source,source)
+            with self.assertRaises(ValueError): prepare_comparison(source,output,output)
+
     def test_all_sixteen_presets_have_exact_output_and_valid_model_canvas(self):
         self.assertEqual(len(presets()), 8)
         for preset in presets():

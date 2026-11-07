@@ -40,7 +40,7 @@ public static class ProcessRunner
     {
         var stdout = new StringBuilder(); var stderr = new StringBuilder();
         var exit = await RunAsync(file, args, cwd, s => stdout.AppendLine(s), s => stderr.AppendLine(s), token);
-        if (exit != 0) throw new InvalidOperationException(stderr.ToString().Trim() is { Length: > 0 } detail ? detail : $"{Path.GetFileName(file)}: errore {exit}");
+        if (exit != 0) throw new InvalidOperationException(stderr.ToString().Trim() is { Length: > 0 } detail ? detail : $"{Path.GetFileName(file)}: error {exit}");
         return stdout.ToString().Trim();
     }
 }

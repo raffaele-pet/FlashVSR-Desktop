@@ -1,4 +1,32 @@
-# Verification — 30 October 2026
+# Verification
+
+## Release 1.1.0 — 7 November 2026
+
+- Rebuilt the application and guided installer with a shared neutral dark
+  theme, compact horizontal branding and English controls/status/errors.
+- Removed aspect selection. Exact native ratios now select canonical presets
+  or a native-ratio geometry for arbitrary dimensions; only the model canvas
+  is rounded to multiples of 128. Standard and High retain their pixel budgets.
+- 29 C# service checks, 19 Windows PowerShell launcher checks and all 10
+  Python regression tests passed. Tests cover arbitrary native ratios, all
+  canonical presets, frame borders, shorter audio, complete frame counts,
+  playback copies and packed comparison frame correspondence.
+- 18 integration checks passed using real WPF media decoding on Windows:
+  both views share one decoded frame/clock, correctly clipped source regions,
+  mode changes, divider drag, paused seeking, pause/resume, full screen and
+  return, end/replay, clear and cancellation of pending media initialization.
+  These media checks require a Windows desktop with Media Foundation; CI
+  builds the harness while local checks exercise playback.
+- The self-contained Setup upgraded the existing local installation and
+  passed the real NVIDIA BF16/CUDA/Triton verification.
+- A complete 107-frame / 24 fps source at 1376×768 was processed through
+  the installed GUI. All 107 frames were verified at 2064×1152, preserving
+  its native 43:24 ratio. The synchronized comparison opened automatically.
+- Application, setup, actual video playback, comparison and full-screen
+  rendering were visually checked. Playback previews are local disposable
+  copies; saved output quality and original input are unaffected.
+- No separate repository download archive is distributed. Installation is
+  documented through Releases or the repository's two BAT entry points.
 
 ## Repository launchers
 
