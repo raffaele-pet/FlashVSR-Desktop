@@ -156,7 +156,7 @@ function Get-FlashVsrInstaller {
     Invoke-WebRequest $assets.Checksum.browser_download_url -OutFile $checksum -UseBasicParsing -TimeoutSec 30
     if (Test-Path -LiteralPath $installer -PathType Leaf) {
         try { Assert-InstallerChecksum $installer $checksum; return $installer }
-        catch { Write-Verbose 'Installer in cache non valido: nuovo download.' }
+        catch { Write-Verbose 'Cached installer is invalid: downloading again.' }
     }
     $partial = $installer + '.download'
     try {
@@ -196,7 +196,7 @@ function Invoke-FlashVsrInstall {
 function Invoke-FlashVsrLaunch {
     $application = Find-FlashVsrApplication
     if ($null -eq $application) {
-        if ($NoUi) { throw 'FlashVSR Desktop is not installed. Run Installa.bat.' }
+        if ($NoUi) { throw 'FlashVSR Desktop is not installed. Run Install.bat.' }
         Add-Type -AssemblyName System.Windows.Forms
         $answer = [Windows.Forms.MessageBox]::Show(
             "FlashVSR Desktop is not installed. Open the setup wizard?",

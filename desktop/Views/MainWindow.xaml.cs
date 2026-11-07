@@ -13,7 +13,7 @@ namespace FlashVsr.Desktop.Views;
 public partial class MainWindow : Window
 {
     private string? _input, _lastOutput, _previewPath, _comparisonPath;
-    private bool _busy, _autoOutput = true, _updatingOutput;
+    private bool _busy, _autoName = true, _updatingName;
     private CancellationTokenSource? _jobCts, _probeCts;
     private readonly Stopwatch _elapsed = new();
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
@@ -24,11 +24,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent(); App.DarkCaption(this);
+        FolderBox.Text = AppPaths.DefaultOutput;
+        Player.BrowseRequested += (_, _) => { if (!_busy) ChooseVideo(); };
         _timer.Tick += (_, _) => { if (_busy) FrameProgress.Text = $"{_frames:N0} / {_total:N0} frames · {_elapsed.Elapsed:mm\\:ss}"; };
         UpdateOptions();
     }
-    private void Choose_Click(object sender, RoutedEventArgs e) => ChooseVideo();
-    private void Drop_Click(object sender, MouseButtonEventArgs e) { if (!_busy && _input == null && !e.Handled) ChooseVideo(); }
+    private void Choose_Click(object sender, RoutedEventArgs e) { if (!_busy) ChooseVideo(); }
     private void ChooseVideo()
     {
         var dialog = new OpenFileDialog { Title = "Open video", Filter = "Video|*.mp4;*.mov;*.mkv;*.avi;*.webm;*.m4v|All files|*.*", CheckFileExists = true };
@@ -68,7 +69,7 @@ public partial class MainWindow : Window
                         var image = new BitmapImage(); image.BeginInit(); image.CacheOption = BitmapCacheOption.OnLoad;
                         image.UriSource = new Uri(thumbnail); image.EndInit(); image.Freeze(); Player.SetPoster(image);
                     }
-                    _autoOutput = true; UpdateOptions(); StatusTitle.Text = ""; StartButton.IsEnabled = true;
+                    _autoName = true; UpdateOptions(); StatusTitle.Text = ""; StartButton.IsEnabled = true;
                 });
             }, AddLog, token);
             await new WorkerService().RunAsync(["--preview", path, "--output", preview], _ => { }, AddLog, token);
@@ -89,31 +90,31 @@ public partial class MainWindow : Window
     private void Quality_Changed(object sender, RoutedEventArgs e) => UpdateOptions();
     private void UpdateOptions()
     {
-        if (StandardSize == null || HighSize == null || OutputBox == null) return;
+        if (StandardSize == null || HighSize == null || NameBox == null) return;
         StandardSize.Text = Presets.ForVideo(_width, _height, false).Label;
         HighSize.Text = Presets.ForVideo(_width, _height, true).Label;
         var p = SelectedResolution;
-        if (_autoOutput && _input != null) {
-            _updatingOutput = true;
-            try { OutputBox.Text = Path.Combine(AppPaths.DefaultOutput, $"{Path.GetFileNameWithoutExtension(_input)}_FlashVSR_{p.Width}x{p.Height}.mp4"); }
-            finally { _updatingOutput = false; }
+        if (_autoName && _input != null) {
+            _updatingName = true;
+            try { NameBox.Text = OutputDestination.DefaultName(_input, p); }
+            finally { _updatingName = false; }
         }
     }
-    private void Output_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) { if (!_updatingOutput) _autoOutput = false; }
+    private void Name_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e) { if (!_updatingName) _autoName = string.IsNullOrWhiteSpace(NameBox.Text); }
+    private void Name_LostFocus(object sender, KeyboardFocusChangedEventArgs e) { if (string.IsNullOrWhiteSpace(NameBox.Text)) { _autoName = true; UpdateOptions(); } }
+    private void Folder_LostFocus(object sender, KeyboardFocusChangedEventArgs e) { if (string.IsNullOrWhiteSpace(FolderBox.Text)) FolderBox.Text = AppPaths.DefaultOutput; }
     private void Output_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new SaveFileDialog { Title = "Save upscaled video", Filter = "MP4 video|*.mp4", DefaultExt = ".mp4", AddExtension = true, OverwritePrompt = true, FileName = Path.GetFileName(OutputBox.Text) };
-        var folder = Path.GetDirectoryName(OutputBox.Text); if (Directory.Exists(folder)) dialog.InitialDirectory = folder;
-        if (dialog.ShowDialog(this) == true) { OutputBox.Text = dialog.FileName; _autoOutput = false; }
+        var dialog = new OpenFolderDialog { Title = "Choose output folder" };
+        if (Directory.Exists(FolderBox.Text)) dialog.InitialDirectory = FolderBox.Text;
+        if (dialog.ShowDialog(this) == true) FolderBox.Text = dialog.FolderName;
     }
     private async void Start_Click(object sender, RoutedEventArgs e)
     {
         if (_input == null || _busy) return;
         string output;
         try {
-            output = Path.GetFullPath(OutputBox.Text.Trim());
-            if (!output.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Choose an output file with the .mp4 extension.");
-            if (output.Equals(_input, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("The original video cannot be overwritten.");
+            output = OutputDestination.Resolve(_input, NameBox.Text, FolderBox.Text, SelectedResolution, AppPaths.DefaultOutput);
             if (File.Exists(output) && MessageBox.Show(this, "Replace this file once upscaling completes?", "File already exists", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         } catch (Exception error) { MessageBox.Show(this, error.Message, "Output file"); return; }
         Player.Clear(); DeletePreview(_comparisonPath); _comparisonPath = null;
@@ -157,7 +158,7 @@ public partial class MainWindow : Window
     }
     private void SetBusy(bool value)
     {
-        _busy = value; OptionsPanel.IsEnabled = ChangeButton.IsEnabled = SetupButton.IsEnabled = !value;
+        _busy = value; OptionsPanel.IsEnabled = SetupButton.IsEnabled = VideoName.IsEnabled = !value; Player.CanBrowse = !value;
         StartButton.Visibility = value ? Visibility.Collapsed : Visibility.Visible; CancelButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         StartButton.IsEnabled = !value && _input != null; CancelButton.IsEnabled = true;
     }

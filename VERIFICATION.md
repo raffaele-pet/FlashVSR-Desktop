@@ -1,5 +1,22 @@
 # Verification
 
+## Release 1.1.1 — 7 November 2026
+
+- Split output selection into a single-line Name and a single-line Save to
+  folder, prefilled with the default Videos/FlashVSR directory. Generated
+  names follow source/resolution; custom names remain independent of quality.
+- 44 service checks passed, including blank defaults, MP4 extension handling,
+  invalid/path-traversal/device names and original-file overwrite prevention.
+- 23 real WPF player checks passed, including the central hand-cursor chooser,
+  timeline clicks not requesting a file, and inward/outward full-screen icons.
+- Both resolution buttons use the same height; their top edge shares the
+  preview's header-row offset. The redundant Open video action was removed.
+- Renamed repository entry points to Install.bat and Launch.bat; all 19
+  Windows PowerShell launcher checks passed with the English filenames.
+- Reviewed every published release asset: only its versioned EXE and 100-byte
+  checksum were present. The checksum is required by the verified BAT download;
+  no unnecessary uploaded assets were found.
+
 ## Release 1.1.0 — 7 November 2026
 
 - Rebuilt the application and guided installer with a shared neutral dark

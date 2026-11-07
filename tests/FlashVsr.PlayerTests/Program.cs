@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Input;
 using System.Windows.Threading;
 using FlashVsr.Desktop;
 using FlashVsr.Desktop.Views;
@@ -27,6 +28,13 @@ static class Program
         window.Loaded += async (_,_) => {
             if(args.Length==2 && args[1]=="--inspect") { player.Load(System.IO.Path.GetFullPath(args[0]),true,3); exit=0; return; }
             try {
+                var browseCount=0; player.BrowseRequested += (_,_)=>browseCount++;
+                var choose=(Button)player.FindName("EmptyState");
+                Check(choose.Cursor==Cursors.Hand,"The central file chooser has no hand cursor");
+                choose.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Check(browseCount==1,"The central chooser did not request a video");
+                ((Slider)player.FindName("SeekBar")).RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice,0,MouseButton.Left){RoutedEvent=UIElement.MouseLeftButtonUpEvent});
+                Check(browseCount==1,"Clicking the timeline requested a video");
                 player.Load(System.IO.Path.GetFullPath(args[0]),true,3);
                 var play=(Button)player.FindName("PlayButton");
                 for(var i=0;i<200 && !play.IsEnabled;i++) await Task.Delay(100);
@@ -58,12 +66,14 @@ static class Program
                 Check(((RectangleGeometry)after.Clip).Rect.X>400,"Slide divider did not move");
                 player.ToggleFullscreen(); await Task.Delay(200);
                 Check(!ReferenceEquals(Window.GetWindow(player),window),"Full screen did not open");
+                Check(((TextBlock)player.FindName("FullscreenIcon")).Text=="\uE73F","Full screen did not show the inward icon");
                 Check(ReferenceEquals(clock,media.Clock),"Full screen replaced the shared clock");
                 player.ToggleFullscreen(); await Task.Delay(200);
                 Check(ReferenceEquals(host.Content,player) && ReferenceEquals(clock,media.Clock),"Returning from full screen replaced the player");
+                Check(((TextBlock)player.FindName("FullscreenIcon")).Text=="\uE740","Leaving full screen did not restore the outward icon");
                 player.TogglePlayback(); await Task.Delay(250);
                 Check(clock.CurrentTime!.Value.TotalSeconds>1.8,"Resume after seek did not advance");
-                await Task.Delay(1800);
+                for(var i=0;i<50 && ((TextBlock)player.FindName("PlayIcon")).Text!="\uE768";i++) await Task.Delay(100);
                 Check(((TextBlock)player.FindName("PlayIcon")).Text=="\uE768","End of video did not reset the play control");
                 player.TogglePlayback(); await Task.Delay(300);
                 Check(clock.CurrentTime!.Value.TotalSeconds<.8,"Play at the end did not restart the video");

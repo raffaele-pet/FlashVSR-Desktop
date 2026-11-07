@@ -7,6 +7,21 @@ using FlashVsr.Desktop.Services;
 
 static void Assert(bool test, string message) { if (!test) throw new Exception(message); }
 var checks = 0;
+var source = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "source.mp4"));
+var outputFolder = Path.Combine(Path.GetTempPath(), "FlashVSR output");
+var standard = Presets.ForVideo(1920,1080,false);
+var highResolution = Presets.ForVideo(1920,1080,true);
+Assert(OutputDestination.DefaultName(source,standard)=="source_FlashVSR_2048x1152","Incorrect default name"); checks++;
+Assert(OutputDestination.Resolve(source,"","",standard,outputFolder)==Path.Combine(outputFolder,"source_FlashVSR_2048x1152.mp4"),"Blank name/folder did not use defaults"); checks++;
+Assert(OutputDestination.Resolve(source," ",outputFolder,highResolution,outputFolder).EndsWith("source_FlashVSR_2560x1440.mp4"),"Default name did not follow resolution"); checks++;
+Assert(OutputDestination.Resolve(source,"Custom name",outputFolder,highResolution,outputFolder)==Path.Combine(outputFolder,"Custom name.mp4"),"Custom name changed"); checks++;
+Assert(OutputDestination.Resolve(source,"Custom.MP4",outputFolder,standard,outputFolder).EndsWith("Custom.mp4"),"MP4 extension duplicated"); checks++;
+Assert(OutputDestination.Resolve(source,"scene.v2",outputFolder,standard,outputFolder).EndsWith("scene.v2.mp4"),"Version suffix removed from file name"); checks++;
+foreach(var invalid in new[]{"../escape","nested\\file","bad:name","CON","aux.mp4","LPT9","trailing.",".mp4"}) {
+    var rejected=false; try { OutputDestination.Resolve(source,invalid,outputFolder,standard,outputFolder); } catch(InvalidOperationException) { rejected=true; }
+    Assert(rejected,"Invalid output name accepted: "+invalid); checks++;
+}
+try { OutputDestination.Resolve(source,"source",Path.GetDirectoryName(source)!,standard,outputFolder); throw new Exception("Original overwrite accepted"); } catch(InvalidOperationException) { checks++; }
 foreach (var (w,h) in new[] {(1920,1080),(1080,1920),(1001,777),(4096,2160),(3440,1440)}) foreach (var high in new[] {false,true}) {
     var p = Presets.ForVideo(w,h,high);
     Assert((long)p.Width*h == (long)p.Height*w,"Native aspect ratio mismatch");

@@ -75,9 +75,9 @@ try {
     # Run the actual BAT files from another working directory. A tiny native
     # argument recorder replaces powershell.exe only in this test process's
     # PATH, so the test neither installs software nor opens the real app.
-    $repoCopy = Join-Path $testRoot ('ZIP estratto ' + [char]0xe0 + ' & !100%')
+    $repoCopy = Join-Path $testRoot ('Downloaded repository ' + [char]0xe0 + ' & !100%')
     New-Item -ItemType Directory -Path (Join-Path $repoCopy 'scripts') -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $projectRoot 'Installa.bat'),(Join-Path $projectRoot 'Avvia.bat') -Destination $repoCopy
+    Copy-Item -LiteralPath (Join-Path $projectRoot 'Install.bat'),(Join-Path $projectRoot 'Launch.bat') -Destination $repoCopy
     [IO.File]::WriteAllText((Join-Path $repoCopy 'scripts\RepositoryLauncher.ps1'), '# argument fixture')
     $fakeBin = Join-Path $testRoot 'fake-bin'; New-Item -ItemType Directory -Path $fakeBin | Out-Null
     Add-Type -OutputAssembly (Join-Path $fakeBin 'powershell.exe') -OutputType WindowsApplication -TypeDefinition @'
@@ -97,7 +97,7 @@ class ArgumentRecorder {
 '@
     $env:PATH = $fakeBin + ';' + $originalPath
     Set-Location $testRoot
-    foreach ($entry in @(@('Installa.bat','Install'), @('Avvia.bat','Launch'))) {
+    foreach ($entry in @(@('Install.bat','Install'), @('Launch.bat','Launch'))) {
         $capture = Join-Path $testRoot ($entry[1] + '.args')
         $env:FLASHVSR_ARGUMENT_CAPTURE = $capture
         $command = New-Object Diagnostics.ProcessStartInfo

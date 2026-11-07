@@ -17,6 +17,9 @@ public partial class ComparisonPlayer : UserControl
     private bool _playing, _updatingSeek, _seeking, _resumeAfterSeek, _hasAfter, _ended;
     private Window? _fullscreen;
     public bool HasVideo => _clock != null;
+    public event EventHandler? BrowseRequested;
+    public bool CanBrowse { get => EmptyState.IsEnabled; set => EmptyState.IsEnabled = value; }
+    private void Browse_Click(object sender, RoutedEventArgs e) { e.Handled = true; BrowseRequested?.Invoke(this, EventArgs.Empty); }
     public ComparisonPlayer()
     {
         InitializeComponent();
@@ -165,7 +168,15 @@ public partial class ComparisonPlayer : UserControl
             if (e.Key is Key.Escape or Key.F11) { e.Handled = true; _fullscreen?.Close(); }
             else if (e.Key == Key.Space) { e.Handled = true; TogglePlayback(); }
         };
-        _fullscreen.Closed += (_, _) => { _fullscreen!.Content = null; _fullscreen = null; host.Content = this; owner?.Activate(); };
+        FullscreenIcon.Text = "\uE73F";
+        FullscreenButton.ToolTip = "Exit full screen (Esc)";
+        System.Windows.Automation.AutomationProperties.SetName(FullscreenButton, "Exit full screen");
+        _fullscreen.Closed += (_, _) => {
+            _fullscreen!.Content = null; _fullscreen = null; host.Content = this;
+            FullscreenIcon.Text = "\uE740"; FullscreenButton.ToolTip = "Full screen (F11)";
+            System.Windows.Automation.AutomationProperties.SetName(FullscreenButton, "Full screen");
+            owner?.Activate();
+        };
         _fullscreen.Show();
     }
     public void Dispose() { _fullscreen?.Close(); ReleaseClocks(); }

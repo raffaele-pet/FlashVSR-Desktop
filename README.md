@@ -7,7 +7,9 @@ Compare the original and result in the built-in player: Before, After or a dragg
 
 ## Install
 
-**EXE:** download the Windows Setup from **[Releases → Assets](https://github.com/raffaele-pet/FlashVSR-Desktop/releases/latest)** and open it.
+Choose **one** of these two installation methods:
+
+**EXE:** download the Windows Installer from **[Releases → Assets](https://github.com/raffaele-pet/FlashVSR-Desktop/releases/latest)** and open it.
 
 **Repository:** clone it, or download it from **Code → Download** and extract the downloaded folder:
 
@@ -15,7 +17,7 @@ Compare the original and result in the built-in player: Before, After or a dragg
 git clone https://github.com/raffaele-pet/FlashVSR-Desktop.git
 ```
 
-Open **`Installa.bat`** to download and run the latest verified installer. Then use **`Avvia.bat`** or the desktop shortcut. No compilation is required.
+Open **`Install.bat`** to download and run the latest verified installer. Then use **`Launch.bat`** or the desktop shortcut. No compilation is required. Both methods install the same application.
 
 The guided installer prepares Python, PyTorch/CUDA, Triton, FFmpeg and the model. It shows progress, supports resumable dependency/model downloads and creates a desktop shortcut. An existing model folder can be reused. Internet is needed for installation; processing stays on your PC.
 

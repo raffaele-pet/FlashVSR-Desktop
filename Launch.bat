@@ -1,5 +1,5 @@
 @echo off
 setlocal DisableDelayedExpansion
-rem Works from any current directory; the app need not be inside this ZIP.
+rem Launch the installed application from any current directory.
 start "" powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -STA -File "%~dp0scripts\RepositoryLauncher.ps1" -Action Launch
 exit /b
