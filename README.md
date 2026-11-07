@@ -21,6 +21,8 @@ Open **`Install.bat`** to download and run the latest verified installer. Then u
 
 The guided installer prepares Python, PyTorch/CUDA, Triton, FFmpeg and the model. It shows progress, supports resumable dependency/model downloads and creates a desktop shortcut. An existing model folder can be reused. Internet is needed for installation; processing stays on your PC.
 
+To repair an existing installation, open the **Repair installation** shortcut in the application's installation folder.
+
 ## Requirements
 
 - Windows 10/11 x64; NVIDIA Ampere / RTX 30 series or newer. CPU, AMD and Intel are unsupported.

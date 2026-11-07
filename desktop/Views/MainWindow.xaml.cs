@@ -158,13 +158,12 @@ public partial class MainWindow : Window
     }
     private void SetBusy(bool value)
     {
-        _busy = value; OptionsPanel.IsEnabled = SetupButton.IsEnabled = VideoName.IsEnabled = !value; Player.CanBrowse = !value;
+        _busy = value; OptionsPanel.IsEnabled = VideoName.IsEnabled = !value; Player.CanBrowse = !value;
         StartButton.Visibility = value ? Visibility.Collapsed : Visibility.Visible; CancelButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         StartButton.IsEnabled = !value && _input != null; CancelButton.IsEnabled = true;
     }
     private void AddLog(string line) => Dispatcher.BeginInvoke(() => { if (LogBox.Text.Length > 80000) LogBox.Text = LogBox.Text[^40000..]; LogBox.AppendText(line + Environment.NewLine); LogBox.ScrollToEnd(); });
     private void Cancel_Click(object sender, RoutedEventArgs e) { _jobCts?.Cancel(); CancelButton.IsEnabled = false; StatusTitle.Text = "Cancelling…"; }
-    private void Setup_Click(object sender, RoutedEventArgs e) => new SetupWindow(AppPaths.Root) { Owner = this }.ShowDialog();
     private void OpenFolder_Click(object sender, RoutedEventArgs e) { if (_lastOutput != null) Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{_lastOutput}\"") { UseShellExecute = true }); }
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {
